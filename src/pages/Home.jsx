@@ -4,10 +4,10 @@ export default function Home() {
   return (
     <div style={container}>
       <div style={hero}>
-        <h1 style={title}>FoodBridge 🍽️</h1>
+        <h1 style={title}>Food Bridge</h1>
         <p style={subtitle}>
-          Connecting surplus food with those who need it the most.
-          Reduce food waste. Feed lives. Build a better future.
+          From Surplus to Sustenance: 
+          Reducing Food Wastage and Feeding the Hungry
         </p>
 
         <div style={btnGroup}>
@@ -22,12 +22,13 @@ export default function Home() {
       </div>
 
       <section style={section}>
-        <h2>Why FoodBridge?</h2>
+        <h2>Why Food Bridge?</h2>
         <ul style={list}>
-          <li>🌍 Reduce food wastage</li>
-          <li>🤝 Connect donors with NGOs</li>
-          <li>🍛 Help feed people in need</li>
-          <li>📊 Transparent & trackable system</li>
+          <li>🌍 Reduce Food Wastage</li>
+          <li>🍛 Redistribute Food to Hungry and Needy Individuals</li>
+          <li>🤝 Connecting the Donors with NGOs</li>
+          <li>🍛 Quality Check - Delivers Quality Food</li>
+          <li>📊 Prompt and Transparent Social Service</li>
           <li>💬 Direct communication via chat</li>
         </ul>
       </section>
@@ -35,10 +36,10 @@ export default function Home() {
       <section style={sectionAlt}>
         <h2>How It Works</h2>
         <div style={steps}>
-          <div style={card}>1️⃣ Donors add surplus food</div>
-          <div style={card}>2️⃣ NGOs view available food</div>
-          <div style={card}>3️⃣ NGOs book food</div>
-          <div style={card}>4️⃣ Chat & coordinate pickup</div>
+          <div style={card}>1️⃣ Donors add the surplus food</div>
+          <div style={card}>2️⃣ NGOs checks the available food</div>
+          <div style={card}>3️⃣ NGOs reserve the food</div>
+          <div style={card}>4️⃣ Chat & coordinate to pickup the food</div>
         </div>
       </section>
 
