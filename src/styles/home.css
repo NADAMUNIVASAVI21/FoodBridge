@@ -1,0 +1,58 @@
+.home {
+  padding: 40px;
+  background: #fff;
+}
+
+.hero h1 {
+  color: #2e7d32;
+  font-size: 40px;
+}
+
+.buttons {
+  margin-top: 20px;
+}
+
+.btn {
+  padding: 12px 20px;
+  margin-right: 10px;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.primary {
+  background: #2e7d32;
+  color: white;
+}
+
+.outline {
+  border: 2px solid #2e7d32;
+  color: #2e7d32;
+}
+
+.info {
+  margin-top: 60px;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: #f4f4f4;
+  padding: 25px;
+  border-radius: 10px;
+}
+
+.bottom-image {
+  margin-top: 60px;
+  display: flex;
+  justify-content: center;
+}
+
+.bottom-image img {
+  max-width: 700px;
+  width: 100%;
+}
