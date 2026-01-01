@@ -1,165 +1,159 @@
-import { useState } from "react";
-import { addDoc, collection, serverTimestamp } from "firebase/firestore";
+import { useEffect, useRef, useState } from "react";
+import {
+  collection,
+  addDoc,
+  query,
+  orderBy,
+  onSnapshot,
+  serverTimestamp
+} from "firebase/firestore";
 import { auth, db } from "../firebase";
-import { useNavigate } from "react-router-dom";
-import { analyzeFood } from "../ai/foodAI";
 
-export default function AddFood() {
-  const [name, setName] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [coords, setCoords] = useState(null);
-  const [aiData, setAiData] = useState(null);
-  const [loading, setLoading] = useState(false);
+export default function Chat({ donorId, ngoId }) {
+  const [messages, setMessages] = useState([]);
+  const [text, setText] = useState("");
+  const bottomRef = useRef(null);
 
-  const navigate = useNavigate();
+  // Unique chat room ID
+  const chatId =
+    donorId < ngoId ? `${donorId}_${ngoId}` : `${ngoId}_${donorId}`;
 
-  // 📍 Get live GPS location
-  const getLocation = () => {
-    navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setCoords({
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-        });
-        alert("Location captured!");
-      },
-      () => alert("Please allow location access")
+  // Fetch messages in real time
+  useEffect(() => {
+    const q = query(
+      collection(db, "chats", chatId, "messages"),
+      orderBy("createdAt")
     );
-  };
 
-  // 🤖 AI
-  const handleAI = async () => {
-    if (!name) return alert("Enter food name first");
-    setLoading(true);
-    try {
-      const res = await analyzeFood(name);
-      setAiData(res);
-    } catch {
-      alert("AI analysis failed");
-    }
-    setLoading(false);
-  };
-
-  // 💾 Save food
-  const saveFood = async () => {
-    if (!name || !quantity || !coords) {
-      alert("Fill all details and capture location");
-      return;
-    }
-
-    await addDoc(collection(db, "foods"), {
-      name,
-      quantity,
-      coordinates: coords,
-      donorId: auth.currentUser.uid,
-      status: "available",
-      aiCategory: aiData?.category || "",
-      aiUrgency: aiData?.urgency || "",
-      aiPeople: aiData?.estimated_people || "",
-      createdAt: serverTimestamp(),
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      setMessages(snapshot.docs.map(doc => doc.data()));
     });
 
-    alert("Food added successfully!");
-    navigate("/donor/myfood");
+    return () => unsubscribe();
+  }, [chatId]);
+
+  // Auto-scroll
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
+  // Send message
+  const sendMessage = async () => {
+    if (!text.trim()) return;
+
+    await addDoc(collection(db, "chats", chatId, "messages"), {
+      senderId: auth.currentUser.uid,
+      text,
+      createdAt: serverTimestamp()
+    });
+
+    setText("");
   };
 
   return (
-    <div style={box}>
-      <h2>Add Food</h2>
+    <div style={styles.chatBox}>
+      <div style={styles.header}>Chat</div>
 
-      <input
-        style={input}
-        placeholder="Food name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
+      <div style={styles.messages}>
+        {messages.map((msg, i) => {
+          const isMe = msg.senderId === auth.currentUser.uid;
 
-      <input
-        style={input}
-        placeholder="Quantity (e.g. 20 plates)"
-        value={quantity}
-        onChange={(e) => setQuantity(e.target.value)}
-      />
+          return (
+            <div
+              key={i}
+              style={{
+                display: "flex",
+                justifyContent: isMe ? "flex-end" : "flex-start",
+                marginBottom: 8
+              }}
+            >
+              <div
+                style={{
+                  ...styles.bubble,
+                  background: isMe ? "#dcf8c6" : "#ffffff",
+                  border: isMe ? "1px solid #b2e59f" : "1px solid #ddd"
+                }}
+              >
+                {msg.text}
+              </div>
+            </div>
+          );
+        })}
+        <div ref={bottomRef} />
+      </div>
 
-      <button style={btnBlue} onClick={getLocation}>
-        📍 Use Live Location
-      </button>
-
-      {coords && (
-        <p style={{ color: "green" }}>
-          Location saved ({coords.lat.toFixed(4)}, {coords.lng.toFixed(4)})
-        </p>
-      )}
-
-      <button style={btnPurple} onClick={handleAI}>
-        {loading ? "Analyzing..." : "Analyze with AI 🤖"}
-      </button>
-
-      {aiData && (
-        <div style={aiBox}>
-          <p><b>Category:</b> {aiData.category}</p>
-          <p><b>Urgency:</b> {aiData.urgency}</p>
-          <p><b>Estimated People:</b> {aiData.estimated_people}</p>
-        </div>
-      )}
-
-      <button style={btnGreen} onClick={saveFood}>
-        Save Food
-      </button>
+      <div style={styles.inputBox}>
+        <input
+          style={styles.input}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Type a message..."
+          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+        />
+        <button style={styles.button} onClick={sendMessage}>
+          Send
+        </button>
+      </div>
     </div>
   );
 }
 
-/* styles */
-const box = {
-  maxWidth: 600,
-  margin: "30px auto",
-  padding: 25,
-  background: "#fff",
-  borderRadius: 12,
-  boxShadow: "0 4px 10px rgba(0,0,0,0.1)",
-};
+/* Inline styles (Instagram-like) */
+const styles = {
+  chatBox: {
+    width: "100%",
+    maxWidth: "500px",
+    height: "500px",
+    border: "1px solid #ccc",
+    borderRadius: "10px",
+    display: "flex",
+    flexDirection: "column",
+    background: "#f5f5f5"
+  },
 
-const input = {
-  width: "100%",
-  padding: 12,
-  marginBottom: 10,
-  borderRadius: 6,
-  border: "1px solid #ccc",
-};
+  header: {
+    padding: "10px",
+    borderBottom: "1px solid #ccc",
+    fontWeight: "bold",
+    textAlign: "center",
+    background: "#ffffff"
+  },
 
-const btnBlue = {
-  width: "100%",
-  padding: 10,
-  background: "#1976d2",
-  color: "white",
-  border: "none",
-  borderRadius: 6,
-  marginBottom: 10,
-};
+  messages: {
+    flex: 1,
+    padding: "10px",
+    overflowY: "auto"
+  },
 
-const btnPurple = {
-  width: "100%",
-  padding: 10,
-  background: "#6a1b9a",
-  color: "white",
-  border: "none",
-  borderRadius: 6,
-  marginBottom: 10,
-};
+  bubble: {
+    padding: "8px 12px",
+    borderRadius: "15px",
+    maxWidth: "70%",
+    fontSize: "14px"
+  },
 
-const btnGreen = {
-  width: "100%",
-  padding: 12,
-  background: "#2e7d32",
-  color: "white",
-  border: "none",
-  borderRadius: 8,
-};
+  inputBox: {
+    display: "flex",
+    padding: "8px",
+    borderTop: "1px solid #ccc",
+    background: "#fff"
+  },
 
-const aiBox = {
-  background: "#f3e5f5",
-  padding: 12,
-  borderRadius: 8,
-  marginBottom: 10,
+  input: {
+    flex: 1,
+    padding: "8px",
+    borderRadius: "20px",
+    border: "1px solid #ccc",
+    outline: "none"
+  },
+
+  button: {
+    marginLeft: "8px",
+    padding: "8px 14px",
+    borderRadius: "20px",
+    border: "none",
+    background: "#25D366",
+    color: "white",
+    cursor: "pointer"
+  }
 };
