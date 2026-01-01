@@ -12,7 +12,11 @@ import Chat from "../../components/Chat";
 export default function MyFood() {
   const [foods, setFoods] = useState([]);
   const [editId, setEditId] = useState(null);
-  const [editData, setEditData] = useState({});
+  const [editData, setEditData] = useState({
+    name: "",
+    quantity: "",
+    location: ""
+  });
   const [activeNgo, setActiveNgo] = useState(null);
 
   const fetchFoods = async () => {
@@ -31,16 +35,26 @@ export default function MyFood() {
   const startEdit = (food) => {
     setEditId(food.id);
     setEditData({
-      name: food.name,
-      quantity: food.quantity,
-      location: food.location
+      name: food.name || "",
+      quantity: food.quantity || "",
+      location: food.location || ""
     });
   };
 
   const updateFood = async (id) => {
-    await updateDoc(doc(db, "foods", id), editData);
-    setEditId(null);
-    fetchFoods();
+    try {
+      await updateDoc(doc(db, "foods", id), {
+        name: editData.name,
+        quantity: Number(editData.quantity),
+        location: editData.location
+      });
+
+      setEditId(null);
+      fetchFoods();
+    } catch (error) {
+      console.error(error);
+      alert("Failed to update food");
+    }
   };
 
   const deleteFood = async (id) => {
@@ -67,28 +81,42 @@ export default function MyFood() {
           {editId === food.id ? (
             <>
               <input
+                type="text"
                 value={editData.name}
                 onChange={e =>
                   setEditData({ ...editData, name: e.target.value })
                 }
+                placeholder="Food name"
               />
               <br />
+
               <input
+                type="number"
                 value={editData.quantity}
                 onChange={e =>
                   setEditData({ ...editData, quantity: e.target.value })
                 }
+                placeholder="Quantity"
               />
               <br />
+
               <input
+                type="text"
                 value={editData.location}
                 onChange={e =>
                   setEditData({ ...editData, location: e.target.value })
                 }
+                placeholder="Location"
               />
               <br />
 
-              <button onClick={() => updateFood(food.id)}>Save</button>
+              <button
+                onClick={() => updateFood(food.id)}
+                disabled={!editData.name || !editData.quantity}
+              >
+                Save
+              </button>
+
               <button onClick={() => setEditId(null)}>Cancel</button>
             </>
           ) : (

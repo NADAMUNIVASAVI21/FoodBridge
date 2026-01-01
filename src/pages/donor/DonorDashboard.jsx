@@ -1,10 +1,17 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { auth, db } from "../../firebase";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
 
 export default function DonorDashboard() {
   const [foods, setFoods] = useState([]);
+  const navigate = useNavigate();
+
+  const logout = async () => {
+    await signOut(auth);
+    navigate("/login");
+  };
 
   useEffect(() => {
     const fetchFoods = async () => {
@@ -25,17 +32,22 @@ export default function DonorDashboard() {
 
   return (
     <div style={container}>
-      {/* HEADER */}
       <div style={topBar}>
         <h1>Welcome Donor 🙌</h1>
-        <Link to="/donor/profile" style={profileBtn}>👤 Profile</Link>
+
+        <div style={{ display: "flex", gap: "10px" }}>
+          <Link to="/donor/profile" style={profileBtn}>👤 Profile</Link>
+
+          <button onClick={logout} style={logoutBtn}>
+            Logout
+          </button>
+        </div>
       </div>
 
       <p style={subtitle}>
         Your generosity helps reduce hunger and food waste.
       </p>
 
-      {/* STATS */}
       <div style={statsRow}>
         <StatBox title="Total Food Added" value={foods.length} />
         <StatBox title="Available" value={available} />
@@ -43,7 +55,6 @@ export default function DonorDashboard() {
         <StatBox title="Picked Up" value={picked} />
       </div>
 
-      {/* ACTIONS */}
       <div style={actionRow}>
         <Link to="/donor/add">
           <button style={primaryBtn}>➕ Add Food</button>
@@ -54,7 +65,6 @@ export default function DonorDashboard() {
         </Link>
       </div>
 
-      {/* RECENT */}
       <section style={section}>
         <h2>Recent Donations</h2>
 
@@ -77,7 +87,7 @@ export default function DonorDashboard() {
   );
 }
 
-/* ---------- COMPONENTS ---------- */
+/* ✅ MISSING COMPONENT (FIX) */
 function StatBox({ title, value }) {
   return (
     <div style={statBox}>
@@ -87,7 +97,7 @@ function StatBox({ title, value }) {
   );
 }
 
-/* ---------- STYLES ---------- */
+/* ---------------- STYLES ---------------- */
 
 const container = {
   padding: "30px",
@@ -107,6 +117,15 @@ const profileBtn = {
   padding: "8px 16px",
   borderRadius: "20px",
   textDecoration: "none"
+};
+
+const logoutBtn = {
+  background: "#e53935",
+  color: "white",
+  padding: "8px 16px",
+  borderRadius: "20px",
+  border: "none",
+  cursor: "pointer"
 };
 
 const subtitle = {

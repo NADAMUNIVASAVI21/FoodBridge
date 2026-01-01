@@ -1,11 +1,18 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { auth, db } from "../../firebase";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
 
 export default function NgoDashboard() {
   const [foods, setFoods] = useState([]);
   const [bookedFoods, setBookedFoods] = useState([]);
+  const navigate = useNavigate();
+
+  const logout = async () => {
+    await signOut(auth);
+    navigate("/login");
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -27,12 +34,18 @@ export default function NgoDashboard() {
     <div style={container}>
       <div style={topBar}>
         <h1>Welcome NGO 👋</h1>
-        <Link to="/ngo/profile" style={profileBtn}>👤 Profile</Link>
+
+        <div style={{ display: "flex", gap: "10px" }}>
+          <Link to="/ngo/profile" style={profileBtn}>👤 Profile</Link>
+
+          <button onClick={logout} style={logoutBtn}>
+            Logout
+          </button>
+        </div>
       </div>
 
       <p style={subtitle}>Helping fight hunger together</p>
 
-      {/* Stats */}
       <div style={statsRow}>
         <StatBox title="Food Booked" value={bookedFoods.length} />
         <StatBox title="Active Donors" value={new Set(foods.map(f => f.donorId)).size} />
@@ -40,7 +53,6 @@ export default function NgoDashboard() {
         <StatBox title="Messages" value="Chat" />
       </div>
 
-      {/* Available */}
       <section style={section}>
         <h2>Available Food</h2>
 
@@ -57,7 +69,6 @@ export default function NgoDashboard() {
         </Link>
       </section>
 
-      {/* Booked */}
       <section style={sectionAlt}>
         <h2>My Bookings</h2>
 
@@ -81,7 +92,7 @@ export default function NgoDashboard() {
   );
 }
 
-/* ✅ REQUIRED COMPONENT */
+/* COMPONENT */
 function StatBox({ title, value }) {
   return (
     <div style={statBox}>
@@ -91,8 +102,7 @@ function StatBox({ title, value }) {
   );
 }
 
-/* ================= STYLES ================= */
-
+/* STYLES */
 const container = {
   padding: "30px",
   maxWidth: "1100px",
@@ -111,6 +121,15 @@ const profileBtn = {
   padding: "8px 16px",
   borderRadius: "20px",
   textDecoration: "none"
+};
+
+const logoutBtn = {
+  background: "#e53935",
+  color: "white",
+  padding: "8px 16px",
+  borderRadius: "20px",
+  border: "none",
+  cursor: "pointer"
 };
 
 const subtitle = {

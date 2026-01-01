@@ -1,41 +1,43 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
+import { auth } from "../../firebase";
 
 export default function AdminDashboard() {
+  const navigate = useNavigate();
+
+  const logout = async () => {
+    await signOut(auth);
+    navigate("/login");
+  };
+
   return (
     <div style={containerStyle}>
-  <h1 style={titleStyle}>Admin Dashboard</h1>
+      <div style={topBar}>
+        <h1 style={titleStyle}>Admin Dashboard</h1>
 
-  <p style={subtitleStyle}>
-    Manage users and monitor activity in FoodBridge.
-  </p>
+        <button onClick={logout} style={logoutBtn}>
+          Logout
+        </button>
+      </div>
 
-  <div style={buttonWrapper}>
-    <Link to="/admin/users">
-      <button
-        style={btnStyle}
-        onMouseOver={e => Object.assign(e.target.style, btnHoverStyle)}
-        onMouseOut={e => Object.assign(e.target.style, btnStyle)}
-      >
-        👥 Manage Users
-      </button>
-    </Link>
+      <p style={subtitleStyle}>
+        Manage users and monitor activity in FoodBridge.
+      </p>
 
-    <Link to="/admin/analytics">
-      <button
-        style={btnStyle}
-        onMouseOver={e => Object.assign(e.target.style, btnHoverStyle)}
-        onMouseOut={e => Object.assign(e.target.style, btnStyle)}
-      >
-        📊 View Analytics
-      </button>
-    </Link>
-  </div>
-</div>
+      <div style={buttonWrapper}>
+        <Link to="/admin/users">
+          <button style={btnStyle}>👥 Manage Users</button>
+        </Link>
 
+        <Link to="/admin/analytics">
+          <button style={btnStyle}>📊 View Analytics</button>
+        </Link>
+      </div>
+    </div>
   );
 }
 
-
+/* STYLES */
 
 const containerStyle = {
   minHeight: "100vh",
@@ -44,11 +46,16 @@ const containerStyle = {
   fontFamily: "Segoe UI, sans-serif",
 };
 
+const topBar = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+};
+
 const titleStyle = {
   fontSize: "32px",
   fontWeight: "700",
   color: "#1f2937",
-  marginBottom: "10px",
 };
 
 const subtitleStyle = {
@@ -70,13 +77,16 @@ const btnStyle = {
   cursor: "pointer",
   borderRadius: "12px",
   border: "none",
-  background: "#8888fbff",
+  background: "#6366f1",
   color: "white",
-  boxShadow: "0 8px 20px rgba(37, 99, 235, 0.25)",
-  transition: "all 0.3s ease",
+  boxShadow: "0 8px 20px rgba(99,102,241,0.35)",
 };
 
-const btnHoverStyle = {
-  transform: "translateY(-3px)",
-  boxShadow: "0 12px 28px rgba(37, 99, 235, 0.35)",
+const logoutBtn = {
+  padding: "10px 20px",
+  background: "#ef4444",
+  color: "white",
+  border: "none",
+  borderRadius: "10px",
+  cursor: "pointer",
 };
