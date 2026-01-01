@@ -100,13 +100,7 @@ export default function AddFood() {
         onChange={e => setQuantity(e.target.value)}
       />
 
-      {/* Image Upload */}
-      <input
-        type="file"
-        accept="image/*"
-        onChange={e => setImage(e.target.files[0])}
-        style={{ marginBottom: 10 }}
-      />
+      
 
       <button style={btnBlue} onClick={getLocation}>
         📍 Use Live Location

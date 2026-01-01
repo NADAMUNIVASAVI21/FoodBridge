@@ -81,7 +81,7 @@ export default function AdminAnalytics() {
               datasets: [
                 {
                   data: [donors, ngos],
-                  backgroundColor: ["#4caf50", "#2196f3"]
+                  backgroundColor: ["#90fa94ff", "#a6d5feff"]
                 }
               ]
             }}
@@ -96,7 +96,7 @@ export default function AdminAnalytics() {
               datasets: [
                 {
                   data: [available, booked],
-                  backgroundColor: ["#81c784", "#ffb74d"]
+                  backgroundColor: ["#a3fba9ff", "#f9d19aff"]
                 }
               ]
             }}
@@ -114,7 +114,7 @@ export default function AdminAnalytics() {
               {
                 label: "Food Count",
                 data: [available, booked],
-                backgroundColor: ["#66bb6a", "#ffa726"]
+                backgroundColor: ["#92f695ff", "#facf8eff"]
               }
             ]
           }}
@@ -159,7 +159,7 @@ export default function AdminAnalytics() {
                       color: "white",
                       fontSize: "12px",
                       background:
-                        food.status === "available" ? "#4caf50" : "#f57c00"
+                        food.status === "available" ? "#97f69bff" : "#f5ca9dff"
                     }}
                   >
                     {food.status}
@@ -198,7 +198,7 @@ const chartRow = {
 
 const chartBox = {
   width: "350px",
-  background: "#f9f9f9",
+  background: "#e7fbf8ff",
   padding: "20px",
   borderRadius: "10px"
 };
@@ -206,20 +206,20 @@ const chartBox = {
 const statBox = {
   padding: "20px",
   borderRadius: "10px",
-  background: "#f1f1f1",
+  background: "#e2f8f7ff",
   textAlign: "center"
 };
 
 const tableStyle = {
   width: "100%",
   borderCollapse: "collapse",
-  background: "#ffffff",
+  background: "#ecfbf5ff",
   borderRadius: "8px",
   overflow: "hidden"
 };
 
 const thTdStyle = {
-  border: "1px solid #ddd",
+  border: "1px solid #3a564eff",
   padding: "10px",
   textAlign: "center"
 };
