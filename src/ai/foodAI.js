@@ -1,4 +1,4 @@
-export async function analyzeFood(text) {
+export function analyzeFood(text) {
   const lower = text.toLowerCase();
 
   let category = "General Food";
@@ -9,27 +9,18 @@ export async function analyzeFood(text) {
     category = "Cooked Food";
     urgency = "High";
     estimated_people = 15;
-  }
-
-  if (lower.includes("bread") || lower.includes("packets")) {
+  } else if (lower.includes("bread") || lower.includes("packet")) {
     category = "Packed Food";
     urgency = "Low";
     estimated_people = 10;
-  }
-
-  if (lower.includes("vegetable") || lower.includes("fruit")) {
+  } else if (lower.includes("vegetable") || lower.includes("fruit")) {
     category = "Fresh Produce";
-    urgency = "Medium";
     estimated_people = 8;
   }
 
-  if (lower.includes("box") || lower.includes("boxes")) {
+  if (lower.includes("box")) {
     estimated_people += 10;
   }
 
-  return {
-    category,
-    urgency,
-    estimated_people
-  };
+  return { category, urgency, estimated_people };
 }
