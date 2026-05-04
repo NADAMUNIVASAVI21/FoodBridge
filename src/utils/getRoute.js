@@ -4,15 +4,15 @@ export async function getRoute(start, end) {
     {
       method: "POST",
       headers: {
-        "Authorization": import.meta.env.VITE_ORS_KEY,
-        "Content-Type": "application/json"
+        Authorization: import.meta.env.VITE_ORS_KEY,
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         coordinates: [
           [start.lng, start.lat],
-          [end.lng, end.lat]
-        ]
-      })
+          [end.lng, end.lat],
+        ],
+      }),
     }
   );
 
