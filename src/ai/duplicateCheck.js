@@ -1,15 +1,21 @@
 export function isDuplicateFood(newText, oldFoods) {
-  const text = newText.toLowerCase();
+  const words = newText
+    .toLowerCase()
+    .replace(/[^\w\s]/g, "")
+    .split(" ")
+    .filter(Boolean);
 
   for (let food of oldFoods) {
-    const existing = food.name.toLowerCase();
+    const existingWords = food.name
+      .toLowerCase()
+      .replace(/[^\w\s]/g, "")
+      .split(" ");
 
-    let matchCount = 0;
-    text.split(" ").forEach(word => {
-      if (existing.includes(word)) matchCount++;
-    });
+    let matchCount = words.filter(w => existingWords.includes(w)).length;
 
-    if (matchCount >= 2) return true;
+    if (matchCount >= Math.ceil(words.length / 2)) {
+      return true;
+    }
   }
 
   return false;
